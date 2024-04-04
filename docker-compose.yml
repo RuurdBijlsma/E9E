@@ -1,0 +1,19 @@
+version: '3'
+services:
+  minecraft-server:
+    build:
+      context: .
+    ports:
+      - "25565:25565"
+    volumes:
+      - mcdata:/server
+      - ./server-files/server.properties:/server/server.properties
+      - ./server-files/backups:/server/backups
+    networks:
+      - net
+  
+networks:
+  net:
+
+volumes:
+  mcdata:
