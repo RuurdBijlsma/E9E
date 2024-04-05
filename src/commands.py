@@ -1,10 +1,12 @@
-from server import Server
+import server
 from telegram import Update
 from telegram.ext import ContextTypes
 
+HELP_MESSAGE = "Usage: /server aan|uit|status"
+
 
 async def show_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Usage: /server aan|uit|status")
+    await update.message.reply_text(HELP_MESSAGE)
 
 
 async def manage_server(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -16,10 +18,10 @@ async def manage_server(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
     match args:
         case ["aan"]:
-            await Server.server_aan(update)
+            await server.aan(update)
         case ["uit"]:
-            await Server.server_uit(update)
+            await server.uit(update)
         case ["status"]:
-            await Server.status(update)
+            await server.status(update)
         case _:
-            await update.message.reply_text("WRONG")
+            await update.message.reply_text(HELP_MESSAGE)

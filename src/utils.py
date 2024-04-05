@@ -1,7 +1,24 @@
+import asyncio
 import subprocess
 
+process_names = ["java"]
 
-def kill_java_processes() -> None:
+
+async def kill_server(server_process: subprocess.Popen | None, kill_timeout=5) -> bool:
+    if server_process:
+        server_process.kill()
+    kill_server_processes()
+    waited = 0
+    while True:
+        if not is_server_on():
+            return True
+        await asyncio.sleep(0.05)
+        waited += 0.05
+        if waited >= kill_timeout:
+            return False
+
+
+def kill_server_processes() -> None:
     try:
         # Get a list of all running processes containing "java" in their command
         process_list = (
@@ -10,22 +27,28 @@ def kill_java_processes() -> None:
 
         # Iterate through the process list
         for process in process_list:
-            if "java" in process.lower():
+            if any(p in process.lower() for p in process_names):
                 # Extract the process ID (PID)
                 pid = int(process.split()[0])
                 # Kill the process
                 subprocess.run(["kill", "-9", str(pid)])
-                print(f"Killed Java process with PID {pid}")
+                print(f"Killed {process.lower()} process with PID {pid}")
     except subprocess.CalledProcessError:
         print("Error retrieving process list.")
 
 
-def check_java_processes() -> bool:
+def is_server_on() -> bool:
     try:
         process_list = (
             subprocess.check_output(["ps", "ax"]).decode("utf-8").splitlines()
         )
-        java_processes = any("java" in process.lower() for process in process_list)
+        java_processes = any(
+            any(
+                p in process.lower() and "defunct" not in process.lower()
+                for process in process_list
+            )
+            for p in process_names
+        )
         return java_processes
     except subprocess.CalledProcessError:
         return False
