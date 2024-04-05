@@ -1,8 +1,6 @@
 import asyncio
 import subprocess
 
-process_names = ["java"]
-
 
 async def kill_server(server_process: subprocess.Popen | None, kill_timeout=5) -> bool:
     if server_process:
@@ -27,7 +25,7 @@ def kill_server_processes() -> None:
 
         # Iterate through the process list
         for process in process_list:
-            if any(p in process.lower() for p in process_names):
+            if "java" in process.lower():
                 # Extract the process ID (PID)
                 pid = int(process.split()[0])
                 # Kill the process
@@ -43,11 +41,8 @@ def is_server_on() -> bool:
             subprocess.check_output(["ps", "ax"]).decode("utf-8").splitlines()
         )
         java_processes = any(
-            any(
-                p in process.lower() and "defunct" not in process.lower()
-                for process in process_list
-            )
-            for p in process_names
+            "java" in process.lower() and "defunct" not in process.lower()
+            for process in process_list
         )
         return java_processes
     except subprocess.CalledProcessError:
