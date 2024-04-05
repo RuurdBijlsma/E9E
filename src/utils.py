@@ -1,5 +1,7 @@
 import asyncio
+import shutil
 import subprocess
+from pathlib import Path
 
 
 async def kill_server(server_process: subprocess.Popen | None, kill_timeout=5) -> bool:
@@ -47,3 +49,28 @@ def is_server_on() -> bool:
         return java_processes
     except subprocess.CalledProcessError:
         return False
+
+
+def copy_world() -> bool:
+    source = Path("/world")
+    target = Path("/server/world")
+
+    if not source.exists() and not target.exists():
+        print(
+            "Source directory for world does not exist, and there is no server world yet"
+        )
+        return False
+
+    # Check if the target folder exists
+    if target.exists():
+        print(f"Target folder '{target}' already exists. No need to copy world.")
+        return True
+    else:
+        # Copy the contents from source to target
+        try:
+            shutil.copytree(source, target)
+            print(f"Folder copied from '{source}' to '{target}'.")
+            return True
+        except Exception as e:
+            print(f"Error copying folder: {e}")
+            return False

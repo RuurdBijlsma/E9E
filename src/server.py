@@ -7,6 +7,8 @@ from utils import is_server_on, kill_server
 
 class Server:
     process: subprocess.Popen | None = None
+    world_is_copied: bool = False
+    copy_failed = False
 
 
 async def status(update: Update) -> None:
@@ -17,6 +19,14 @@ async def status(update: Update) -> None:
 
 
 async def aan(update: Update) -> None:
+    if Server.copy_failed:
+        await update.message.reply_text("The world folder failed to copy!")
+        return
+
+    if not Server.world_is_copied:
+        await update.message.reply_text("The world folder hasn't been copied yet!")
+        return
+
     if is_server_on():
         await update.message.reply_text("Server is al aan!")
         return

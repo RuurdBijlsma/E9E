@@ -11,6 +11,7 @@ services:
       - mc-data:/server
       - ./server-files/server.properties:/server/server.properties
       - ./server-files/backups:/server/backups
+      - ./server-files/world:/world
     networks:
       - net
 
