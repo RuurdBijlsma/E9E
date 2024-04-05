@@ -2,8 +2,11 @@ FROM ubuntu:latest AS python-base
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get update && apt-get install -y python3.12 python3-distutils python3-pip python3-apt
+RUN apt-get update && apt-get install -y python3.12 python3-distutils python3-pip python3-apt openjdk-17-jdk
 
+# Set environment variables (if needed)
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH=$PATH:$JAVA_HOME/bin
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=off \
@@ -15,7 +18,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
     VENV_PATH="/opt/pysetup/.venv"
-
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
 FROM python-base AS builder-base
@@ -51,6 +53,10 @@ COPY . .
 
 ENV PYTHONPATH "/app/src"
 RUN chmod +x ./server-start.sh
+
+COPY ./server-files/eula.txt /server/
+COPY ./server-files/server-setup-config.yaml /server/
+COPY ./server-files/start-server.sh /server/
 
 EXPOSE 8000
 CMD ["python","src/main.py"]

@@ -1,8 +1,10 @@
 import asyncio
+import signal
 import subprocess
 import sys
 
 from telegram import Update
+from utils import check_java_processes, kill_java_processes
 
 
 class Server:
@@ -22,7 +24,10 @@ class Server:
             return
 
         Server.process = subprocess.Popen(
-            ["./server-start.sh"], stdout=sys.stdout, stderr=sys.stderr
+            ["/server/start-server.sh"],
+            cwd="/server/",
+            stdout=sys.stdout,
+            stderr=sys.stderr,
         )
 
         await update.message.reply_text("De server gaat aan")
@@ -40,23 +45,20 @@ class Server:
             await update.message.reply_text("Het is niet select de server te doden :(")
 
     @staticmethod
-    async def kill(delay=0.3) -> bool:
+    async def kill(kill_timeout=5) -> bool:
         Server.process.terminate()
-        await asyncio.sleep(delay)
-        if Server.process.poll() is not None:
-            # Terminated successfully
-            Server.process = None
-            return True
-        Server.process.kill()
-        await asyncio.sleep(delay)
-        if Server.process.poll() is not None:
-            # Killed successfully
-            Server.process = None
-            return True
-        return False
+        kill_java_processes()
+        waited = 0
+        while True:
+            if not Server.is_aan():
+                return True
+            await asyncio.sleep(0.05)
+            waited += 0.05
+            if waited >= kill_timeout:
+                return False
 
     @staticmethod
     def is_aan():
         if Server.process is None:
             return False
-        return Server.process.poll() is None
+        return Server.process.poll() is None and check_java_processes()
