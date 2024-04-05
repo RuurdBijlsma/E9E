@@ -3,17 +3,19 @@ services:
   minecraft-server:
     build:
       context: .
+    env_file:
+      - .env
     ports:
       - "25565:25565"
     volumes:
-      - mcdata:/server
+      - data:/server
       - ./server-files/server.properties:/server/server.properties
       - ./server-files/backups:/server/backups
     networks:
       - net
-  
+
 networks:
   net:
 
 volumes:
-  mcdata:
+  data:
