@@ -7,7 +7,7 @@
 
 ### Usage
 
-1. Make a `.env` file at the root of this project like so:
+1. Make a `.env` file at the root of this project, with these contents. Replace token with your bot token:
 
 ```
 TELEGRAM_TOKEN=79845897275:DJKFLDFjDFjKLDFljkDFJLKjfkldDLJK
