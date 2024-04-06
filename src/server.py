@@ -1,3 +1,4 @@
+import pathlib
 import subprocess
 import sys
 
@@ -31,8 +32,10 @@ async def aan(update: Update) -> None:
         await update.message.reply_text("Server is al aan!")
         return
 
+    start_file = "/server/start-server.sh"
+    pathlib.Path(start_file).chmod(0o777)
     Server.process = subprocess.Popen(
-        ["/server/start-server.sh"],
+        [start_file],
         cwd="/server/",
         stdout=sys.stdout,
         stderr=sys.stderr,
