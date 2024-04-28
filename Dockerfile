@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS python-base
+FROM ubuntu:23.10 AS python-base
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
