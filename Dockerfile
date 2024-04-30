@@ -52,7 +52,6 @@ WORKDIR /app
 COPY . .
 
 ENV PYTHONPATH "/app/src"
-RUN chmod +x ./server-start.sh
 
 COPY ./server-files/eula.txt /server/
 COPY ./server-files/server-setup-config.yaml /server/

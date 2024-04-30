@@ -11,6 +11,7 @@ services:
       - ./server-files/server.properties:/server/server.properties
       - ./server-files/backups:/server/backups
       - ./server-files/world:/world
+      - ./server-files/test-script.sh:/server/test-script.sh
     networks:
       - net
 
