@@ -13,7 +13,11 @@ async def manage_server(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     user = update.effective_user
 
     msg_text = update.message.text
-    args = msg_text.split(" ")[1:]
+    split_msg = msg_text.split(" ")
+    if len(split_msg) == 1:
+        await update.message.reply_text(HELP_MESSAGE)
+        return
+    args = split_msg[1:]
     print(f"Receive <{user.first_name}>: {msg_text}")
 
     try:
@@ -34,4 +38,4 @@ async def manage_server(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             case _:
                 await update.message.reply_text(HELP_MESSAGE)
     except Exception as e:
-        await update.message.reply_text("ERROR! " + str(e))
+        print("ERROR! " + str(e))

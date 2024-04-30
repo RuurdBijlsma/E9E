@@ -57,7 +57,7 @@ async def command(update: Update, cmd: str) -> None:
 
     stdout_lines_len = len(Server.stdout_lines)
     Server.process.stdin.write(str.encode(cmd + "\n"))
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.4)
     await update.message.reply_text(
         "Command ontvangen ✅\n```log\n"
         + "".join(Server.stdout_lines[stdout_lines_len:])
