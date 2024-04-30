@@ -1,8 +1,10 @@
 FROM ubuntu:22.04 AS python-base
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y software-properties-common
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get update && apt-get install -y python3.12 python3-distutils python3-pip python3-apt openjdk-17-jdk
+RUN apt-get update && apt-get install -y software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get update && apt-get install -y python3.12 python3-distutils python3-pip python3-apt openjdk-17-jdk \
+    && apt-get clean autoclean \
+    && apt-get autoremove --yes
 
 # Set environment variables (if needed)
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
@@ -26,7 +28,9 @@ RUN apt-get update \
         # deps for installing poetry
         curl \
         # deps for building python deps
-        build-essential
+        build-essential \
+    && apt-get clean autoclean \
+    && apt-get autoremove --yes
 
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://install.python-poetry.org | python3
@@ -49,13 +53,12 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 RUN poetry install
 
 WORKDIR /app
-COPY . .
+COPY src ./src
+COPY poetry.lock pyproject.toml ./
 
 ENV PYTHONPATH "/app/src"
 
-COPY ./server-files/eula.txt /server/
-COPY ./server-files/server-setup-config.yaml /server/
-COPY ./server-files/start-server.sh /server/
+COPY ./server-files/eula.txt ./server-files/server-setup-config.yaml ./server-files/start-server.sh /server/
 
 EXPOSE 8000
 CMD ["python","src/main.py"]

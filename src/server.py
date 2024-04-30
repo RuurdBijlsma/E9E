@@ -26,12 +26,12 @@ class Server:
 async def status(update: Update) -> None:
     if is_server_on():
         if len(Server.players) > 0:
-            reply_text = "\n\nGamer lijst:\n" + "\n".join(
+            reply_text = ".\n\nGamer lijst:\n" + "\n".join(
                 [f"{i + 1} - {x}" for i, x in enumerate(Server.players)]
             )
         else:
-            reply_text = "niemand is online :("
-        await update.message.reply_text(f"De server is aan, {reply_text}")
+            reply_text = ", niemand is online :("
+        await update.message.reply_text(f"De server is aan{reply_text}")
     else:
         await update.message.reply_text("De server is uit")
 
